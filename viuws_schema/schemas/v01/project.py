@@ -37,5 +37,5 @@ class Environment(BaseModel):
 
 class Project(SchemaBaseModelV01):
     name: str
-    workflows: dict[str, Workflow] = {}
+    workflows: list[Workflow] = []
     environments: dict[str, Environment] = {}
