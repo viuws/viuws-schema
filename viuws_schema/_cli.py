@@ -21,7 +21,7 @@ def versions() -> None:
         click.echo(version)
 
 
-@cli.command(name="schemas", help="List all supported schemas.")
+@cli.command(name="models", help="List all supported models.")
 @click.option(
     "--version",
     "version",
@@ -30,11 +30,11 @@ def versions() -> None:
     show_default=True,
     help="ViUWS Schema version.",
 )
-def schemas(version: str) -> None:
+def models(version: str) -> None:
     schema_module = SCHEMA_MODULES_BY_VERSION[version]
-    for schema_name, schema_type in inspect.getmembers(schema_module, inspect.isclass):
-        if issubclass(schema_type, SchemaBaseModel):
-            click.echo(schema_name)
+    for model_name, model_type in inspect.getmembers(schema_module, inspect.isclass):
+        if issubclass(model_type, SchemaBaseModel):
+            click.echo(model_name)
 
 
 @cli.command(name="generate", help="Generate a JSON Schema.")
@@ -70,27 +70,35 @@ def schemas(version: str) -> None:
     type=click.File("w"),
     help="Output file path.",
 )
-@click.argument("schema", type=click.STRING)
+@click.argument("model", type=click.STRING)
 def generate(
     version: str,
     mode: JsonSchemaMode,
     indent: int,
     output_file: Optional[IO[Any]],
-    schema: str,
+    model: str,
 ) -> None:
     schema_module = SCHEMA_MODULES_BY_VERSION[version]
-    schema_type = getattr(schema_module, schema, None)
-    if schema_type is None or not issubclass(schema_type, SchemaBaseModel):
-        schema_names = [
-            schema_name
-            for schema_name, schema_type in inspect.getmembers(
+    model_type = getattr(schema_module, model, None)
+    if model_type is None or not issubclass(model_type, SchemaBaseModel):
+        model_names = [
+            model_name
+            for model_name, model_type in inspect.getmembers(
                 schema_module, inspect.isclass
             )
-            if issubclass(schema_type, SchemaBaseModel)
+            if issubclass(model_type, SchemaBaseModel)
         ]
-        raise click.BadParameter(
-            f"'{schema}' not in {schema_names}", param_hint="schema"
-        )
-    json_schema_data = schema_type.model_json_schema(by_alias=True, mode=mode)
+        raise click.BadParameter(f"'{model}' not in {model_names}", param_hint="model")
+    json_schema_data = model_type.model_json_schema(by_alias=True, mode=mode)
+    _remove_titles_inplace(json_schema_data)
     json_schema_str = json.dumps(json_schema_data, indent=indent)
     click.echo(message=json_schema_str, file=output_file)
+
+
+def _remove_titles_inplace(*args) -> None:
+    for arg in args:
+        if isinstance(arg, dict):
+            arg.pop("title", None)
+            _remove_titles_inplace(*arg.values())
+        elif isinstance(arg, list):
+            _remove_titles_inplace(*arg)
