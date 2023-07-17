@@ -1,6 +1,6 @@
 from .process import Process
-from .project import Project
+from .workflow import Workflow
 
-__all__ = ["Process", "Project"]
+__all__ = ["Process", "Workflow"]
 
 VERSION = "0.1"
