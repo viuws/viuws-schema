@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field, Json
+from pydantic import Field, Json
 
-from .base import SchemaBaseModelV01
+from ..base import SchemaBaseModel
+from .base import RootSchemaBaseModelV01
 
 
 class Cardinality(str, Enum):
@@ -11,7 +12,7 @@ class Cardinality(str, Enum):
     MULTIPLE = "multiple"
 
 
-class OCIRuntimeConfig(BaseModel):
+class OCIRuntimeConfig(SchemaBaseModel):
     image: str
     tag: str = "latest"
     cwd: Optional[str] = None
@@ -19,7 +20,7 @@ class OCIRuntimeConfig(BaseModel):
     args: list[str]
 
 
-class Channel(BaseModel):
+class Channel(SchemaBaseModel):
     name: str
     description: str
     cardinality: Cardinality = Cardinality.MULTIPLE
@@ -38,7 +39,7 @@ class OutputChannel(Channel):
     )
 
 
-class Process(SchemaBaseModelV01):
+class Process(RootSchemaBaseModelV01):
     name: str
     description: str
     container: OCIRuntimeConfig
