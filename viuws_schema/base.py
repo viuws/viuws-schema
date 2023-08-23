@@ -10,7 +10,7 @@ class SchemaBaseModel(BaseModel):
 TRoot = TypeVar("TRoot", bound="RootSchemaBaseModel")
 
 
-class RootSchemaBaseModel(BaseModel):
+class RootSchemaBaseModel(SchemaBaseModel):
     _previous_model_type: ClassVar[Optional[Type["RootSchemaBaseModel"]]] = None
     schema_version: str = Field(alias="schemaVersion")
 
