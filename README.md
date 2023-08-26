@@ -8,7 +8,7 @@
 [![pull requests](https://img.shields.io/github/issues-pr/viuws/viuws-schema?label=pull%20requests)](https://github.com/viuws/viuws-schema/pulls)
 [![license](https://img.shields.io/github/license/viuws/viuws-schema?label=license)](https://github.com/viuws/viuws-schema/blob/main/LICENSE)
 
-ViUWS Schema
+ViUWS schema
 
 ## Requirements
 
