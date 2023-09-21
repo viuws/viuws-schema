@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 for version in $(viuws-schema versions); do
+    rm -rf _site/${version}
     mkdir -p _site/${version}
     for model in $(viuws-schema models --version ${version}); do
         viuws-schema generate --version ${version} ${model} > _site/${version}/${model,,}.json

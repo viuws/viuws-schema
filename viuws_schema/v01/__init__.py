@@ -1,6 +1,6 @@
 from .base import VERSION
-from .process import Process
+from .module import Module
 from .registry import Registry
 from .workflow import Workflow
 
-__all__ = ["VERSION", "Process", "Registry", "Workflow"]
+__all__ = ["VERSION", "Module", "Registry", "Workflow"]

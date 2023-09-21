@@ -7,11 +7,6 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
-class Cardinality(str, Enum):
-    SINGLE = "single"
-    MULTIPLE = "multiple"
-
-
 class OCIRuntimeConfig(SchemaBaseModel):
     image: str
     tag: str = "latest"
@@ -20,34 +15,37 @@ class OCIRuntimeConfig(SchemaBaseModel):
     args: list[str]
 
 
-class Channel(SchemaBaseModel):
+class IOCardinality(str, Enum):
+    SINGLE = "single"
+    MULTIPLE = "multiple"
+
+
+class IOSpec(SchemaBaseModel):
     name: str
     description: str
-    cardinality: Cardinality = Cardinality.MULTIPLE
+    cardinality: IOCardinality = IOCardinality.MULTIPLE
 
 
-class InputChannel(Channel):
+class InputSpec(IOSpec):
     required: bool = False
     supported_file_patterns: Optional[list[str]] = Field(
         default=None, alias="supportedFilePatterns"
     )
 
 
-class OutputChannel(Channel):
+class OutputSpec(IOSpec):
     generated_file_pattern: Optional[str] = Field(
         default=None, alias="generatedFilePattern"
     )
 
 
-class Process(RootSchemaBaseModelV01):
+class Module(RootSchemaBaseModelV01):
     name: str
     description: str
     container: OCIRuntimeConfig
-    input_channels: dict[str, InputChannel] = Field(default={}, alias="inputChannels")
-    output_channels: dict[str, OutputChannel] = Field(
-        default={}, alias="outputChannels"
-    )
-    env_json_schema: Optional[Json[Any]] = Field(default=None, alias="envJSONSchema")
+    inputs: dict[str, InputSpec] = Field(default={}, alias="inputs")
+    outputs: dict[str, OutputSpec] = Field(default={}, alias="outputs")
+    env_schema: Optional[Json[Any]] = Field(default=None, alias="envSchema")
     env_ui_schema: Optional[Json[Any]] = Field(default=None, alias="envUISchema")
-    args_json_schema: Optional[Json[Any]] = Field(default=None, alias="argsJSONSchema")
+    args_schema: Optional[Json[Any]] = Field(default=None, alias="argsSchema")
     args_ui_schema: Optional[Json[Any]] = Field(default=None, alias="argsUISchema")

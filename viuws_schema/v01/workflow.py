@@ -6,14 +6,18 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
-class ProcessConfig(SchemaBaseModel):
-    repository: Optional[str] = None
-    revision: Optional[str] = None
-    path: str
+class ModuleConfig(SchemaBaseModel):
     inputs: dict[str, str] = {}
     outputs: dict[str, str] = {}
     env: dict[str, Any] = {}
     args: list[str] = []
+
+
+class Task(SchemaBaseModel):
+    module_repo: Optional[str] = None
+    module_rev: Optional[str] = None
+    module_path: str
+    module_config: ModuleConfig = Field(alias="moduleConfig")
     environment_id: Optional[str] = Field(default=None, alias="environment")
 
 
@@ -25,5 +29,5 @@ class Environment(SchemaBaseModel):
 
 class Workflow(RootSchemaBaseModelV01):
     name: str
-    processes: dict[str, ProcessConfig] = {}
+    tasks: dict[str, Task] = {}
     environments: dict[str, Environment] = {}
