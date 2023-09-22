@@ -10,7 +10,6 @@ from .base import RootSchemaBaseModelV01
 class PluginType(str, Enum):
     WORKFLOW_IMPORT = "workflowImport"
     WORKFLOW_EXPORT = "workflowExport"
-    WORKFLOW_UI = "workflowUI"
 
 
 class PluginInstance(SchemaBaseModel):
@@ -30,15 +29,7 @@ class WorkflowExportPluginInstance(PluginInstance):
     export_function: Any = Field(..., alias="exportFunction")
 
 
-class WorkflowUIPluginInstance(PluginInstance):
-    type: Literal[PluginType.WORKFLOW_UI]
-    ui_title: str = Field(..., alias="uiTitle")
-    ui_function: Any = Field(..., alias="uiFunction")
-
-
 class Plugin(RootSchemaBaseModelV01):
-    plugin: Union[
-        WorkflowImportPluginInstance,
-        WorkflowExportPluginInstance,
-        WorkflowUIPluginInstance,
-    ] = Field(..., discriminator="type")
+    plugin: Union[WorkflowImportPluginInstance, WorkflowExportPluginInstance] = Field(
+        ..., discriminator="type"
+    )
