@@ -8,28 +8,26 @@ from .base import RootSchemaBaseModelV01
 
 
 class PluginType(str, Enum):
-    WORKFLOW_IMPORT = "workflowImport"
-    WORKFLOW_EXPORT = "workflowExport"
+    IMPORT = "import"
+    EXPORT = "export"
 
 
-class PluginInstance(SchemaBaseModel):
+class PluginBase(SchemaBaseModel):
     name: str
     type: PluginType
 
 
-class WorkflowImportPluginInstance(PluginInstance):
-    type: Literal[PluginType.WORKFLOW_IMPORT]
+class ImportPlugin(PluginBase):
+    type: Literal[PluginType.IMPORT]
     import_menu_item: str = Field(..., alias="importMenuItem")
     import_function: Any = Field(..., alias="importFunction")
 
 
-class WorkflowExportPluginInstance(PluginInstance):
-    type: Literal[PluginType.WORKFLOW_EXPORT]
+class ExportPlugin(PluginBase):
+    type: Literal[PluginType.EXPORT]
     export_menu_item: str = Field(..., alias="exportMenuItem")
     export_function: Any = Field(..., alias="exportFunction")
 
 
 class Plugin(RootSchemaBaseModelV01):
-    plugin: Union[WorkflowImportPluginInstance, WorkflowExportPluginInstance] = Field(
-        ..., discriminator="type"
-    )
+    plugin: Union[ImportPlugin, ExportPlugin] = Field(..., discriminator="type")
