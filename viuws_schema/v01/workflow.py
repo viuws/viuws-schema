@@ -6,28 +6,46 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
+class ChannelResource(SchemaBaseModel):
+    channel_id: str = Field(alias="channel")
+    resource_id: str = Field(alias="resource")
+
+
+class EnvVarValue(SchemaBaseModel):
+    envvar: str
+    value: Any
+
+
+class URIResource(SchemaBaseModel):
+    id: str = Field(alias="resource")
+    uri: str
+
+
 class ModuleConfig(SchemaBaseModel):
-    inputs: dict[str, str] = {}
-    outputs: dict[str, str] = {}
-    env: dict[str, Any] = {}
-    args: dict[str, Any] = {}
+    inputs: list[ChannelResource] = []
+    outputs: list[ChannelResource] = []
+    env: list[EnvVarValue] = []
+    args: list[str] = []
 
 
 class Task(SchemaBaseModel):
+    id: str
+    name: str
     module_repo: Optional[str] = Field(default=None, alias="moduleRepo")
     module_rev: Optional[str] = Field(default=None, alias="moduleRev")
-    module_path: str = Field(..., alias="modulePath")
+    module_id: str = Field(alias="module")
     module_config: ModuleConfig = Field(alias="moduleConfig")
     environment_id: Optional[str] = Field(default=None, alias="environment")
 
 
 class Environment(SchemaBaseModel):
+    id: str
     name: str
     base_dir: str = Field(alias="baseDir")
-    data_mappings: dict[str, str] = Field(default={}, alias="dataMappings")
+    uri_resources: list[URIResource] = Field(default=[], alias="uriResources")
 
 
 class Workflow(RootSchemaBaseModelV01):
     name: str
-    tasks: dict[str, Task] = {}
-    environments: dict[str, Environment] = {}
+    tasks: list[Task] = []
+    environments: list[Environment] = []

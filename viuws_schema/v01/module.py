@@ -7,12 +7,17 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
+class EnvVarValue(SchemaBaseModel):
+    envvar: str
+    value: Any
+
+
 class OCIRuntimeConfig(SchemaBaseModel):
     image: str
     tag: str = "latest"
     cwd: Optional[str] = None
-    env: dict[str, Any] = {}
-    args: list[str]
+    env: list[EnvVarValue] = []
+    args: list[str] = []
 
 
 class IOCardinality(str, Enum):
@@ -20,20 +25,21 @@ class IOCardinality(str, Enum):
     MULTIPLE = "multiple"
 
 
-class IOSpec(SchemaBaseModel):
+class Channel(SchemaBaseModel):
+    id: str
     name: str
     description: str
     cardinality: IOCardinality = IOCardinality.MULTIPLE
 
 
-class InputSpec(IOSpec):
+class InputChannel(Channel):
     required: bool = False
     supported_file_patterns: Optional[list[str]] = Field(
         default=None, alias="supportedFilePatterns"
     )
 
 
-class OutputSpec(IOSpec):
+class OutputChannel(Channel):
     generated_file_pattern: Optional[str] = Field(
         default=None, alias="generatedFilePattern"
     )
@@ -43,8 +49,9 @@ class Module(RootSchemaBaseModelV01):
     name: str
     description: str
     container: OCIRuntimeConfig
-    inputs: dict[str, InputSpec] = Field(default={}, alias="inputs")
-    outputs: dict[str, OutputSpec] = Field(default={}, alias="outputs")
+    inputs: list[InputChannel] = []
+    outputs: list[OutputChannel] = []
+    icon_url: Optional[str] = Field(default=None, alias="iconUrl")
     env_schema: Optional[Any] = Field(default=None, alias="envSchema")
     env_ui_schema: Optional[Any] = Field(default=None, alias="envUISchema")
     args_schema: Optional[Any] = Field(default=None, alias="argsSchema")
