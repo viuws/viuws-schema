@@ -6,35 +6,32 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
-class ChannelResource(SchemaBaseModel):
+class ChannelResourceMapping(SchemaBaseModel):
     channel_id: str = Field(alias="channel")
     resource_id: str = Field(alias="resource")
 
 
-class EnvVarValue(SchemaBaseModel):
-    envvar: str
+class EnvVarValueMapping(SchemaBaseModel):
+    env_var: str = Field(alias="envVar")
     value: Any
 
 
-class URIResource(SchemaBaseModel):
-    id: str = Field(alias="resource")
-    uri: str
-
-
 class ModuleConfig(SchemaBaseModel):
-    inputs: list[ChannelResource] = []
-    outputs: list[ChannelResource] = []
-    env: list[EnvVarValue] = []
+    inputs: list[ChannelResourceMapping] = []
+    outputs: list[ChannelResourceMapping] = []
+    env: list[EnvVarValueMapping] = []
     args: list[str] = []
 
 
 class Task(SchemaBaseModel):
     id: str
     name: str
+    module_id: str = Field(alias="module")
     module_repo: Optional[str] = Field(default=None, alias="moduleRepo")
     module_rev: Optional[str] = Field(default=None, alias="moduleRev")
-    module_id: str = Field(alias="module")
-    module_config: ModuleConfig = Field(alias="moduleConfig")
+    module_config: ModuleConfig = Field(
+        default=lambda: ModuleConfig(), alias="moduleConfig"
+    )
     environment_id: Optional[str] = Field(default=None, alias="environment")
 
 
@@ -42,7 +39,6 @@ class Environment(SchemaBaseModel):
     id: str
     name: str
     base_dir: str = Field(alias="baseDir")
-    uri_resources: list[URIResource] = Field(default=[], alias="uriResources")
 
 
 class Workflow(RootSchemaBaseModelV01):

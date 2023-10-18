@@ -7,8 +7,8 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
-class EnvVarValue(SchemaBaseModel):
-    envvar: str
+class EnvVarValueMapping(SchemaBaseModel):
+    env_var: str = Field(alias="envVar")
     value: Any
 
 
@@ -16,7 +16,7 @@ class OCIRuntimeConfig(SchemaBaseModel):
     image: str
     tag: str = "latest"
     cwd: Optional[str] = None
-    env: list[EnvVarValue] = []
+    env: list[EnvVarValueMapping] = []
     args: list[str] = []
 
 
@@ -49,10 +49,10 @@ class Module(RootSchemaBaseModelV01):
     name: str
     description: str
     container: OCIRuntimeConfig
-    inputs: list[InputChannel] = []
-    outputs: list[OutputChannel] = []
-    icon_url: Optional[str] = Field(default=None, alias="iconUrl")
+    input_channels: list[InputChannel] = Field(default=[], alias="inputChannels")
+    output_channels: list[OutputChannel] = Field(default=[], alias="outputChannels")
     env_schema: Optional[Any] = Field(default=None, alias="envSchema")
     env_ui_schema: Optional[Any] = Field(default=None, alias="envUISchema")
     args_schema: Optional[Any] = Field(default=None, alias="argsSchema")
     args_ui_schema: Optional[Any] = Field(default=None, alias="argsUISchema")
+    icon_url: Optional[str] = Field(default=None, alias="iconUrl")
