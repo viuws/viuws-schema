@@ -25,10 +25,10 @@ class ModuleConfig(SchemaBaseModel):
 
 class Task(SchemaBaseModel):
     id: str
+    repo: Optional[str] = None
+    rev: Optional[str] = None
     module_id: str = Field(alias="module")
     module_config: ModuleConfig = Field(alias="moduleConfig")
-    module_repo: Optional[str] = Field(default=None, alias="moduleRepo")
-    module_rev: Optional[str] = Field(default=None, alias="moduleRev")
     environment_id: Optional[str] = Field(default=None, alias="environment")
 
 
