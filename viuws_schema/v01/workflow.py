@@ -10,7 +10,7 @@ class ModuleConfig(SchemaBaseModel):
     inputs: dict[str, str] = {}
     outputs: dict[str, str] = {}
     env: dict[str, Any] = {}
-    args: list[str] = []
+    args: dict[str, Any] = {}
 
 
 class Task(SchemaBaseModel):
