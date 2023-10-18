@@ -27,8 +27,6 @@ class IOCardinality(str, Enum):
 
 class Channel(SchemaBaseModel):
     id: str
-    name: str
-    description: str
     cardinality: IOCardinality = IOCardinality.MULTIPLE
 
 

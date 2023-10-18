@@ -25,7 +25,6 @@ class ModuleConfig(SchemaBaseModel):
 
 class Task(SchemaBaseModel):
     id: str
-    name: str
     module_id: str = Field(alias="module")
     module_config: ModuleConfig = Field(alias="moduleConfig")
     module_repo: Optional[str] = Field(default=None, alias="moduleRepo")
@@ -35,7 +34,6 @@ class Task(SchemaBaseModel):
 
 class Environment(SchemaBaseModel):
     id: str
-    name: str
     base_dir: str = Field(alias="baseDir")
 
 
