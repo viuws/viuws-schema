@@ -27,11 +27,9 @@ class Task(SchemaBaseModel):
     id: str
     name: str
     module_id: str = Field(alias="module")
+    module_config: ModuleConfig = Field(alias="moduleConfig")
     module_repo: Optional[str] = Field(default=None, alias="moduleRepo")
     module_rev: Optional[str] = Field(default=None, alias="moduleRev")
-    module_config: ModuleConfig = Field(
-        default=lambda: ModuleConfig(), alias="moduleConfig"
-    )
     environment_id: Optional[str] = Field(default=None, alias="environment")
 
 
