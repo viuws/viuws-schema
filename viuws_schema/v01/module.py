@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import Field, Json
+from pydantic import Field
 
 from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
@@ -45,7 +45,7 @@ class Module(RootSchemaBaseModelV01):
     container: OCIRuntimeConfig
     inputs: dict[str, InputSpec] = Field(default={}, alias="inputs")
     outputs: dict[str, OutputSpec] = Field(default={}, alias="outputs")
-    env_schema: Optional[Json[Any]] = Field(default=None, alias="envSchema")
-    env_ui_schema: Optional[Json[Any]] = Field(default=None, alias="envUISchema")
-    args_schema: Optional[Json[Any]] = Field(default=None, alias="argsSchema")
-    args_ui_schema: Optional[Json[Any]] = Field(default=None, alias="argsUISchema")
+    env_schema: Optional[Any] = Field(default=None, alias="envSchema")
+    env_ui_schema: Optional[Any] = Field(default=None, alias="envUISchema")
+    args_schema: Optional[Any] = Field(default=None, alias="argsSchema")
+    args_ui_schema: Optional[Any] = Field(default=None, alias="argsUISchema")
