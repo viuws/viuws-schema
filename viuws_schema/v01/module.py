@@ -7,27 +7,34 @@ from ..base import SchemaBaseModel
 from .base import RootSchemaBaseModelV01
 
 
-class EnvVarValueMapping(SchemaBaseModel):
-    env_var: str = Field(alias="envVar")
-    value: Any
+class EnvVar(SchemaBaseModel):
+    name: str
+    value: Optional[str] = None
+    property: Optional[str] = None
+
+
+class Argument(SchemaBaseModel):
+    name: str
+    value: Optional[str] = None
+    property: Optional[str] = None
 
 
 class OCIRuntimeConfig(SchemaBaseModel):
     image: str
     tag: str = "latest"
     cwd: Optional[str] = None
-    env: list[EnvVarValueMapping] = []
-    args: list[str] = []
+    env: list[EnvVar] = []
+    args: list[Argument] = []
 
 
-class IOCardinality(str, Enum):
+class Cardinality(str, Enum):
     SINGLE = "single"
     MULTIPLE = "multiple"
 
 
 class Channel(SchemaBaseModel):
     id: str
-    cardinality: IOCardinality = IOCardinality.MULTIPLE
+    cardinality: Cardinality = Cardinality.MULTIPLE
 
 
 class InputChannel(Channel):
@@ -49,8 +56,8 @@ class Module(RootSchemaBaseModelV01):
     container: OCIRuntimeConfig
     input_channels: list[InputChannel] = Field(default=[], alias="inputChannels")
     output_channels: list[OutputChannel] = Field(default=[], alias="outputChannels")
-    env_schema: Optional[Any] = Field(default=None, alias="envSchema")
-    env_ui_schema: Optional[Any] = Field(default=None, alias="envUISchema")
-    args_schema: Optional[Any] = Field(default=None, alias="argsSchema")
-    args_ui_schema: Optional[Any] = Field(default=None, alias="argsUISchema")
+    config_schema: Optional[dict[str, Any]] = Field(default=None, alias="configSchema")
+    config_ui_schema: Optional[dict[str, Any]] = Field(
+        default=None, alias="configUISchema"
+    )
     icon_url: Optional[str] = Field(default=None, alias="iconUrl")
