@@ -2,13 +2,9 @@ from packaging.version import Version
 
 from . import v01
 
-SCHEMA_MODULES = [v01]
-MAJOR_SCHEMA_VERSIONS = sorted(
-    Version(schema_module.VERSION).major for schema_module in SCHEMA_MODULES
-)
-MAJOR_SCHEMA_VERSION_MODULES = {
+SCHEMA_MODULES = {
     Version(schema_module.VERSION).major: schema_module
-    for schema_module in SCHEMA_MODULES
+    for schema_module in sorted([v01], key=lambda x: Version(x.VERSION).major)
 }
 
 current_schema_module = v01
