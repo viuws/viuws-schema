@@ -55,3 +55,4 @@ class Module(RootSchemaBaseModelV01):
         default=None, alias="configUISchema"
     )
     icon_url: Optional[str] = Field(default=None, alias="iconUrl")
+    # TODO allow custom input/output channels
