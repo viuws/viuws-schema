@@ -24,23 +24,24 @@ class OCIRuntimeConfig(SchemaBaseModel):
     cwd: Optional[str] = None
     env: list[EnvVar] = []
     args: list[Argument] = []
+    # TODO editor env/args
 
 
 class Channel(SchemaBaseModel):
     id: str
+    # TODO cardinality
 
 
 class InputChannel(Channel):
-    required: bool = False
-    supported_file_patterns: Optional[list[str]] = Field(
-        default=None, alias="supportedFilePatterns"
-    )
+    pass
+    # TODO required
+    # TODO wait = False
+    # TODO consumed file patterns
 
 
 class OutputChannel(Channel):
-    generated_file_pattern: Optional[str] = Field(
-        default=None, alias="generatedFilePattern"
-    )
+    pass
+    # TODO produced file patterns
 
 
 class Module(RootSchemaBaseModelV01):

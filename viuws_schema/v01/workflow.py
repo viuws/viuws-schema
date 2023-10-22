@@ -13,8 +13,8 @@ class ChannelResourceMapping(SchemaBaseModel):
 
 class Task(SchemaBaseModel):
     id: str
-    repo: Optional[str] = None
-    rev: Optional[str] = None
+    repo: Optional[str] = None  # None = inlined
+    rev: Optional[str] = None  # Only for GitHub repos
     module_id: str = Field(alias="module")
     inputs: list[ChannelResourceMapping] = []
     outputs: list[ChannelResourceMapping] = []
@@ -24,3 +24,5 @@ class Task(SchemaBaseModel):
 class Workflow(RootSchemaBaseModelV01):
     name: str
     tasks: list[Task] = []
+    # TODO environments
+    # TODO modules (inlined)

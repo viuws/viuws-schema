@@ -31,5 +31,8 @@ class ExportPlugin(PluginBase):
     export_function: JSFunction = Field(alias="exportFunction")
 
 
+# TODO RuntimePlugin
+
+
 class Plugin(RootSchemaBaseModelV01):
     plugin: Union[ImportPlugin, ExportPlugin] = Field(discriminator="type")

@@ -3,17 +3,14 @@ import json
 from typing import Optional, TextIO
 
 import click
+from packaging.version import Version
 
 from .base import RootSchemaBaseModel
-from .utils import SCHEMA_MODULES, current_schema_module, major_version
-
-MAJOR_SCHEMA_VERSIONS = sorted(
-    major_version(schema_module.VERSION) for schema_module in SCHEMA_MODULES
+from .schema import (
+    MAJOR_SCHEMA_VERSION_MODULES,
+    MAJOR_SCHEMA_VERSIONS,
+    current_schema_module,
 )
-MAJOR_SCHEMA_VERSION_MODULES = {
-    major_version(schema_module.VERSION): schema_module
-    for schema_module in SCHEMA_MODULES
-}
 
 
 @click.group()
@@ -31,14 +28,14 @@ def versions() -> None:
 @cli.command(name="models", help="List all supported models.")
 @click.option(
     "--version",
-    "major_schema_version",
-    type=click.Choice(MAJOR_SCHEMA_VERSIONS),
-    default=major_version(current_schema_module.VERSION),
+    "major_schema_version_str",
+    type=click.Choice([str(x) for x in MAJOR_SCHEMA_VERSIONS]),
+    default=str(Version(current_schema_module.VERSION).major),
     show_default=True,
     help="Major schema version.",
 )
-def models(major_schema_version: str) -> None:
-    schema_module = MAJOR_SCHEMA_VERSION_MODULES[major_schema_version]
+def models(major_schema_version_str: str) -> None:
+    schema_module = MAJOR_SCHEMA_VERSIONS[int(major_schema_version_str)]
     for model_type_name, model_type in inspect.getmembers(
         schema_module, inspect.isclass
     ):
@@ -49,9 +46,9 @@ def models(major_schema_version: str) -> None:
 @cli.command(name="generate", help="Generate a JSON Schema for the specified model.")
 @click.option(
     "--version",
-    "major_schema_version",
-    type=click.Choice(MAJOR_SCHEMA_VERSIONS),
-    default=major_version(current_schema_module.VERSION),
+    "major_schema_version_str",
+    type=click.Choice([str(x) for x in MAJOR_SCHEMA_VERSIONS]),
+    default=str(Version(current_schema_module.VERSION).major),
     show_default=True,
     help="Major schema version.",
 )
@@ -72,12 +69,12 @@ def models(major_schema_version: str) -> None:
 )
 @click.argument("model_type_name", metavar="MODEL", type=click.STRING)
 def generate(
-    major_schema_version: str,
+    major_schema_version_str: str,
     indent: int,
     json_schema_file: Optional[TextIO],
     model_type_name: str,
 ) -> None:
-    schema_module = MAJOR_SCHEMA_VERSION_MODULES[major_schema_version]
+    schema_module = MAJOR_SCHEMA_VERSION_MODULES[int(major_schema_version_str)]
     model_type = getattr(schema_module, model_type_name, None)
     if model_type is None or not issubclass(model_type, RootSchemaBaseModel):
         root_model_type_names = [
@@ -99,9 +96,9 @@ def generate(
 @cli.command(name="upgrade", help="Upgrade the specified model instance.")
 @click.option(
     "--to-version",
-    "to_major_schema_version",
-    type=click.Choice(MAJOR_SCHEMA_VERSIONS),
-    default=major_version(current_schema_module.VERSION),
+    "to_major_schema_version_str",
+    type=click.Choice([str(x) for x in MAJOR_SCHEMA_VERSIONS]),
+    default=str(Version(current_schema_module.VERSION).major),
     show_default=True,
     help="Major schema version to upgrade to.",
 )
@@ -130,7 +127,7 @@ def generate(
 @click.argument("model_type_name", metavar="MODEL", type=click.STRING)
 @click.argument("model_instance_file", metavar="FILE", type=click.File())
 def upgrade(
-    to_major_schema_version: str,
+    to_major_schema_version_str: str,
     strict: Optional[bool],
     indent: int,
     output_model_instance_file: Optional[TextIO],
@@ -138,7 +135,7 @@ def upgrade(
     model_instance_file: TextIO,
 ) -> None:
     model_data = json.load(model_instance_file)
-    from_major_schema_version = major_version(model_data["schemaVersion"])
+    from_major_schema_version = Version(model_data["schemaVersion"]).major
     from_schema_module = MAJOR_SCHEMA_VERSION_MODULES[from_major_schema_version]
     from_model_type = getattr(from_schema_module, model_type_name, None)
     if from_model_type is None or not issubclass(from_model_type, RootSchemaBaseModel):
@@ -153,7 +150,7 @@ def upgrade(
             f"'{model_type_name}' not in {root_from_model_type_names}",
             param_hint="MODEL",
         )
-    to_schema_module = MAJOR_SCHEMA_VERSION_MODULES[to_major_schema_version]
+    to_schema_module = MAJOR_SCHEMA_VERSION_MODULES[int(to_major_schema_version_str)]
     to_model_type = getattr(to_schema_module, model_type_name, None)
     if to_model_type is None or not issubclass(to_model_type, RootSchemaBaseModel):
         root_to_model_type_names = [
@@ -190,7 +187,7 @@ def validate(
     model_instance_file: TextIO,
 ) -> None:
     model_data = json.load(model_instance_file)
-    major_schema_version = major_version(model_data["schemaVersion"])
+    major_schema_version = Version(model_data["schemaVersion"]).major
     schema_module = MAJOR_SCHEMA_VERSION_MODULES[major_schema_version]
     model_type = getattr(schema_module, model_type_name, None)
     if model_type is None or not issubclass(model_type, RootSchemaBaseModel):
