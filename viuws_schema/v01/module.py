@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Any, Optional
 
 from pydantic import Field
@@ -27,14 +26,8 @@ class OCIRuntimeConfig(SchemaBaseModel):
     args: list[Argument] = []
 
 
-class Cardinality(str, Enum):
-    SINGLE = "single"
-    MULTIPLE = "multiple"
-
-
 class Channel(SchemaBaseModel):
     id: str
-    cardinality: Cardinality = Cardinality.MULTIPLE
 
 
 class InputChannel(Channel):
