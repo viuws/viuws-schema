@@ -11,6 +11,13 @@ class ChannelResourceMapping(SchemaBaseModel):
     resource_id: str = Field(alias="resource")
 
 
+class NodeProperties(SchemaBaseModel):
+    posx: int
+    posy: int
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+
 class Task(SchemaBaseModel):
     id: str
     repo: Optional[str] = None  # None = inlined
@@ -19,6 +26,7 @@ class Task(SchemaBaseModel):
     inputs: list[ChannelResourceMapping] = []
     outputs: list[ChannelResourceMapping] = []
     config: dict[str, Any] = {}
+    props: Optional[NodeProperties] = None
 
 
 class Workflow(RootSchemaBaseModelV01):
