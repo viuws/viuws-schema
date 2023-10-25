@@ -23,7 +23,7 @@ class Header(SchemaBaseModel):
 
 
 class PayloadType(str, Enum):
-    PING = "ping"
+    PING_REQUEST = "pingRequest"
     PING_RESPONSE = "pingResponse"
 
 
@@ -31,12 +31,16 @@ class PayloadBase(SchemaBaseModel):
     type: PayloadType
 
 
-class ResponsePayloadBase(PayloadBase):
+class RequestPayloadBase(SchemaBaseModel):
+    pass
+
+
+class ResponsePayloadBase(SchemaBaseModel):
     request_id: int = Field(alias="requestId")
 
 
-class PingPayload(PayloadBase):
-    type: Literal[PayloadType.PING] = PayloadType.PING
+class PingRequestPayload(RequestPayloadBase):
+    type: Literal[PayloadType.PING_REQUEST] = PayloadType.PING_REQUEST
 
 
 class PingResponsePayload(ResponsePayloadBase):
@@ -47,4 +51,6 @@ class PingResponsePayload(ResponsePayloadBase):
 
 class Message(RootSchemaBaseModelV01):
     header: Header
-    payload: Union[PingPayload, PingResponsePayload] = Field(discriminator="type")
+    payload: Union[PingRequestPayload, PingResponsePayload] = Field(
+        discriminator="type"
+    )
